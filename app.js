@@ -18,3 +18,4 @@ console.log(firstnmae+" "+ lastname);
 var a="first";
 var b="last";
 var c='${a} ${b}'
+console.log("hello");
