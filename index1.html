@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,intital-scale=1.0" />
+    <title>Document</title>
+
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .box {
+        padding: 20px;
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<body>
+    <form class="box">
+        <input id="inputText" />
+        <button type="submit">Add-</button>
+    </form>
+
+    <div class="container">
+        <ul class="list"></ul>
+
+    </div>
+
+</body>
+
+<script>
+    const readLocalStorage = () => {
+        const localTodos = localStorage.getItem("todos");
+        const todosArr = JSON.parse(localTodos);
+        return todosArr;
+    };
+
+    const updateStyle = (inputEle, li) => {
+        if (inputEle.checked) {
+            li.style.textDecoration = "line-through";
+            li.style.color = "gray";
+        } else {
+            li.style.textDecoration = "none";
+            li.style.color = "black";
+        }
+    };
+
+    const AddTodo = (text, isDone = false) => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        const inputEle = document.createElement("input")
+        inputEle.type = "checkbox";
+        inputEle.checked = isDone;
+        updateStyle(inputEle, li);
+        inputEle.onclick = () => {
+            updateStyle(inputEle, li);
+
+            const arr = readLocalStorage();
+            const updated = arr.map((todo) => {
+                if (todo, text === text) {
+                    return { ...todo, isDone: inputEle.checked };
+                }
+                return todo;
+
+
+            });
+
+            localStorage.setItem("todos", JSON.stringify(updated));
+        };
+        li.prepend(inputEle);
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.onclick = () => {
+            li.remove();
+            const arr = readLocalStorage();
+            const newArr = arr.filter((todo) => todo.text !== text);
+            localStorage.setItem("todos", JSON.stringify(newArr));
+        };
+        li.appendChild(deleteBtn);
+        const ul = document.querySelector("ul");
+        ul.appendChild(li);
+    };
+
+    const todosArr = readLocalStorage();
+    todosArr?.forEach((todo) => {
+        AddTodo(todo.text, todo.isDone);
+    });
+    const form = document.querySelector("form");
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("inputText");
+        const text = input.value;
+        if (text.trim() === "") return;
+        const obj = { text };
+        const localTodos = localStorage.getItem("todos");
+        const todosArr = JSON.parse(localTodos);
+        const newData = todosArr ? [...todosArr, obj] : [obj];
+        localStorage.setItem("todos", JSON.stringify(newData));
+        AddTodo(text);
+        input.value = "";
+    });
+</script>
+
+</html>
